@@ -18,9 +18,9 @@
                 {if in_array($_admin['user_type'],['SuperAdmin','Admin'])}
                 <div class="btn-group pull-right">
                     <a class="btn btn-primary btn-xs" title="save"
-                        href="{Text::url('customers/csv&token=', $csrf_token)}"
-                        onclick="return ask(this, '{Lang::T("This will export to CSV")}?')"><span
-                            class="glyphicon glyphicon-download" aria-hidden="true"></span> CSV</a>
+                        href="{Text::url('customers/csv&token=', $csrf_token)}" onclick="return ask(this, '{Lang::T("
+                        This will export to CSV")}?')"><span class="glyphicon glyphicon-download"
+                            aria-hidden="true"></span> CSV</a>
                 </div>
                 {/if}
                 {Lang::T('Manage Contact')}
@@ -99,7 +99,7 @@
                             <tr>
                                 <th><input type="checkbox" id="select-all"></th>
                                 <th>{Lang::T('Username')}</th>
-                                <th>Photo</th>
+                                <th>{Lang::T('Photo')}</th>
                                 <th>{Lang::T('Account Type')}</th>
                                 <th>{Lang::T('Full Name')}</th>
                                 <th>{Lang::T('Balance')}</th>
@@ -205,14 +205,15 @@
                 </button>
             </div>
             <div class="modal-body">
-                <select id="messageType" class="form-control">
+                <select style="margin-bottom: 10px;" id="messageType" class="form-control">
                     <option value="all">{Lang::T('All')}</option>
                     <option value="email">{Lang::T('Email')}</option>
                     <option value="inbox">{Lang::T('Inbox')}</option>
                     <option value="sms">{Lang::T('SMS')}</option>
                     <option value="wa">{Lang::T('WhatsApp')}</option>
                 </select>
-                <br>
+                <input type="text" style="margin-bottom: 10px;" class="form-control" id="subject-content" value=""
+                    placeholder="{Lang::T('Enter message subject here')}">
                 <textarea id="messageContent" class="form-control" rows="4"
                     placeholder="{Lang::T('Enter your message here...')}"></textarea>
             </div>
@@ -260,11 +261,23 @@
         $('#sendMessageButton').on('click', function () {
             const message = $('#messageContent').val().trim();
             const messageType = $('#messageType').val();
+            const subject = $('#subject-content').val().trim();
+
 
             if (!message) {
                 Swal.fire({
                     title: 'Error!',
                     text: "{Lang::T('Please enter a message to send.')}",
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+                return;
+            }
+
+            if (messageType == 'all' || messageType == 'inbox' || messageType == 'email' && !subject) {
+                Swal.fire({
+                    title: 'Error!',
+                    text: "{Lang::T('Please enter a subject for the message.')}",
                     icon: 'error',
                     confirmButtonText: 'OK'
                 });
@@ -330,6 +343,33 @@
         $('#sendMessageModal').on('hidden.bs.modal', function () {
             // $('#button').focus();
         });
+    });
+</script>
+<script>
+    document.getElementById('messageType').addEventListener('change', function () {
+        const messageType = this.value;
+        const subjectField = document.getElementById('subject-content');
+
+        subjectField.style.display = (messageType === 'all' || messageType === 'email' || messageType === 'inbox') ? 'block' : 'none';
+
+        switch (messageType) {
+            case 'all':
+                subjectField.placeholder = 'Enter a subject for all channels';
+                subjectField.required = true;
+                break;
+            case 'email':
+                subjectField.placeholder = 'Enter a subject for email';
+                subjectField.required = true;
+                break;
+            case 'inbox':
+                subjectField.placeholder = 'Enter a subject for inbox';
+                subjectField.required = true;
+                break;
+            default:
+                subjectField.placeholder = 'Enter message subject here';
+                subjectField.required = false;
+                break;
+        }
     });
 </script>
 {include file = "sections/footer.tpl" }

@@ -137,7 +137,7 @@
                             </option>
                         </select>
                         <p class="help-block">
-                            <b>?_route=settings/app&foo=bar</b> will be <b>/settings/app?foo=bar</b>
+                            <b>?_route=settings/app&foo=bar</b>{Lang::T(' will be ')}<b>/settings/app?foo=bar</b>
                         </p>
                     </div>
                     <span class="help-block col-md-4">{Lang::T('rename .htaccess_firewall to .htaccess')}</span>
@@ -155,7 +155,7 @@
             <h3 class="panel-title">
                 <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseLoginPage"
                     aria-expanded="true" aria-controls="collapseLoginPage">
-                    {Lang::T('Customer Login Page Settings')}
+                    {Lang::T('Customer Login Page')}
                 </a>
             </h3>
         </div>
@@ -255,6 +255,37 @@
     </div>
 
     <div class="panel">
+        <div class="panel-heading" role="tab" id="Coupon">
+            <h4 class="panel-title">
+                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion"
+                    href="#collapseCoupon" aria-expanded="false" aria-controls="collapseCoupon">
+                    {Lang::T('Coupons')}
+                </a>
+            </h4>
+        </div>
+        <div id="collapseCoupon" class="panel-collapse collapse" role="tabpanel">
+            <div class="panel-body">
+                <div class="form-group">
+                    <label class="col-md-3 control-label">{Lang::T('Enable Coupon')}</label>
+                    <div class="col-md-5">
+                        <select name="enable_coupons" id="enable_coupons" class="form-control text-muted">
+                            <option value="no">{Lang::T('No')}</option>
+                            <option value="yes" {if $_c['enable_coupons'] == 'yes'}selected="selected" {/if}>{Lang::T('Yes')}
+                            </option>
+                        </select>
+                    </div>
+                    <p class="help-block col-md-4">
+                        <small>{Lang::T('Enable or disable coupons')}</small>
+                    </p>
+                </div>
+                <button class="btn btn-success btn-block" type="submit">
+                    {Lang::T('Save Changes')}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel">
         <div class="panel-heading" role="tab" id="Registration">
             <h4 class="panel-title">
                 <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion"
@@ -291,13 +322,13 @@
                     <div class="col-md-5">
                         <select name="registration_username" id="voucher_format" class="form-control">
                             <option value="username" {if $_c['registration_username']=='username' }selected="selected"
-                                {/if}>Username
+                                {/if}>{Lang::T('Username')}
                             </option>
                             <option value="email" {if $_c['registration_username']=='email' }selected="selected" {/if}>
-                                Email
+                                {Lang::T('Email')}
                             </option>
                             <option value="phone" {if $_c['registration_username']=='phone' }selected="selected" {/if}>
-                                Phone Number
+                                {Lang::T('Phone Number')}
                             </option>
                         </select>
                     </div>
@@ -470,7 +501,7 @@
             <h4 class="panel-title">
                 <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion"
                     href="#collapseVoucher" aria-expanded="false" aria-controls="collapseVoucher">
-                    Voucher
+                    {Lang::T('Voucher')}
                 </a>
             </h4>
         </div>
@@ -494,20 +525,20 @@
                     <label class="col-md-3 control-label">{Lang::T('Voucher Format')}</label>
                     <div class="col-md-5">
                         <select name="voucher_format" id="voucher_format" class="form-control">
-                            <option value="up" {if $_c['voucher_format']=='up' }selected="selected" {/if}>UPPERCASE
+                            <option value="up" {if $_c['voucher_format']=='up' }selected="selected" {/if}>{Lang::T('UPPERCASE')}
                             </option>
                             <option value="low" {if $_c['voucher_format']=='low' }selected="selected" {/if}>
-                                lowercase
+                                {Lang::T('lowercase')}
                             </option>
                             <option value="rand" {if $_c['voucher_format']=='rand' }selected="selected" {/if}>
-                                RaNdoM
+                                {Lang::T('RaNdoM')}
                             </option>
                             <option value="numbers" {if $_c['voucher_format']=='numbers' }selected="selected" {/if}>
-                                Numbers
+                                {Lang::T('Numbers')}
                             </option>
                         </select>
                     </div>
-                    <p class="help-block col-md-4">UPPERCASE lowercase RaNdoM</p>
+                    <p class="help-block col-md-4">{Lang::T('UPPERCASE lowercase RaNdoM')}</p>
                 </div>
                 {if $_c['disable_voucher'] != 'yes'}
                     <div class="form-group">
@@ -814,8 +845,7 @@
                     href="#collapseEmailNotification" aria-expanded="false" aria-controls="collapseEmailNotification">
                     {Lang::T('Email Notification')}
                     <div class="btn-group pull-right">
-                        <a class="btn btn-success btn-xs" style="color: black;" href="javascript:testEmail()">Test
-                            Email</a>
+                        <a class="btn btn-success btn-xs" style="color: black;" href="javascript:testEmail()">{Lang::T('Test Email')}</a>
                     </div>
                 </a>
             </h4>
@@ -861,10 +891,10 @@
                             </option>
                         </select>
                     </div>
-                    <p class="help-block col-md-4">UPPERCASE lowercase RaNdoM</p>
+                    <p class="help-block col-md-4">{Lang::T('UPPERCASE lowercase RaNdoM')}</p>
                 </div>
                 <div class="form-group">
-                    <label class="col-md-3 control-label">Mail {Lang::T('From')}</label>
+                    <label class="col-md-3 control-label">{Lang::T(' Mail From')}</label>
                     <div class="col-md-5">
                         <input type="text" class="form-control" id="mail_from" name="mail_from"
                             value="{$_c['mail_from']}" placeholder="noreply@host.tld">

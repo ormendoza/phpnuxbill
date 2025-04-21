@@ -30,7 +30,8 @@
                             <select class="form-control" name="service" id="service">
                                 <option value="all" {if $group=='all' }selected{/if}>{Lang::T('All')}</option>
                                 <option value="PPPoE" {if $service=='PPPoE' }selected{/if}>{Lang::T('PPPoE')}</option>
-                                <option value="Hotspot" {if $service=='Hotspot' }selected{/if}>{Lang::T('Hotspot')}</option>
+                                <option value="Hotspot" {if $service=='Hotspot' }selected{/if}>{Lang::T('Hotspot')}
+                                </option>
                                 <option value="VPN" {if $service=='VPN' }selected{/if}>{Lang::T('VPN')}</option>
                             </select>
                         </div>
@@ -41,8 +42,10 @@
                             <select class="form-control" name="group" id="group">
                                 <option value="all" {if $group=='all' }selected{/if}>{Lang::T('All Customers')}</option>
                                 <option value="new" {if $group=='new' }selected{/if}>{Lang::T('New Customers')}</option>
-                                <option value="expired" {if $group=='expired' }selected{/if}>{Lang::T('Expired Customers')}</option>
-                                <option value="active" {if $group=='active' }selected{/if}>{Lang::T('Active Customers')}</option>
+                                <option value="expired" {if $group=='expired' }selected{/if}>{Lang::T('Expired
+                                    Customers')}</option>
+                                <option value="active" {if $group=='active' }selected{/if}>{Lang::T('Active Customers')}
+                                </option>
                             </select>
                         </div>
                     </div>
@@ -50,9 +53,13 @@
                         <label class="col-md-2 control-label">{Lang::T('Send Via')}</label>
                         <div class="col-md-6">
                             <select class="form-control" name="via" id="via">
+                                <option value="all" {if $via=='all' }selected{/if}>{Lang::T('All Channels')}</option>
+                                <option value="inbox" {if $via=='inbox' }selected{/if}>{Lang::T('Inbox')}</option>
+                                <option value="email" {if $via=='email' }selected{/if}>{Lang::T('Email')}</option>
                                 <option value="sms" {if $via=='sms' }selected{/if}>{Lang::T('SMS')}</option>
                                 <option value="wa" {if $via=='wa' }selected{/if}>{Lang::T('WhatsApp')}</option>
-                                <option value="both" {if $via=='both' }selected{/if}>{Lang::T('SMS and WhatsApp')}</option>
+                                <option value="both" {if $via=='both' }selected{/if}>{Lang::T('SMS and WhatsApp')}
+                                </option>
                             </select>
                         </div>
                     </div>
@@ -72,10 +79,21 @@
                             {Lang::T('Use 20 and above if you are sending to all customers to avoid server time out')}
                         </div>
                     </div>
+                    <div class="form-group" id="subject-content">
+                        <label class="col-md-2 control-label">{Lang::T('Subject')}</label>
+                        <div class="col-md-6">
+                            <input type="text" class="form-control" name="subject" id="subject" value=""
+                                placeholder="{Lang::T('Enter message subject here')}">
+                        </div>
+                        <p class="help-block col-md-4">
+                            {Lang::T('You can also use the below placeholders here too')}.
+                        </p>
+                    </div>
                     <div class="form-group">
                         <label class="col-md-2 control-label">{Lang::T('Message')}</label>
                         <div class="col-md-6">
-                            <textarea class="form-control" id="message" name="message" required placeholder="{Lang::T('Compose your message...')}" rows="5">{$message}</textarea>
+                            <textarea class="form-control" id="message" name="message" required
+                                placeholder="{Lang::T('Compose your message...')}" rows="5">{$message}</textarea>
                             <input name="test" id="test" type="checkbox">
                             {Lang::T('Testing [if checked no real message is sent]')}
                         </div>
@@ -93,7 +111,8 @@
                     </div>
                     <div class="form-group">
                         <div class="col-lg-offset-2 col-lg-10">
-                            <button type="button" id="startBulk" class="btn btn-primary">{Lang::T('Start Bulk Messaging')}</button>
+                            <button type="button" id="startBulk" class="btn btn-primary">{Lang::T('Start Bulk
+                                Messaging')}</button>
                             <a href="{Text::url('dashboard')}" class="btn btn-default">{Lang::T('Cancel')}</a>
                         </div>
                     </div>
@@ -112,7 +131,7 @@
             <thead>
                 <tr>
                     <th>{Lang::T('Customer')}</th>
-                    <th>{Lang::T('Phone')}</th>
+                    <th>{Lang::T('Channel')}</th>
                     <th>{Lang::T('Status')}</th>
                     <th>{Lang::T('Message')}</th>
                     <th>{Lang::T('Router')}</th>
@@ -126,6 +145,34 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
+<script>
+    document.getElementById('via').addEventListener('change', function () {
+        const via = this.value;
+        const subject = document.getElementById('subject-content');
+        const subjectField = document.getElementById('subject');
+
+        subject.style.display = (via === 'all' || via === 'email' || via === 'inbox') ? 'block' : 'none';
+
+        switch (via) {
+            case 'all':
+                subjectField.placeholder = 'Enter a subject for all channels';
+                subjectField.required = true; 
+                break;
+            case 'email':
+                subjectField.placeholder = 'Enter a subject for email';
+                subjectField.required = true; 
+                break;
+            case 'inbox':
+                subjectField.placeholder = 'Enter a subject for inbox';
+                subjectField.required = true; 
+                break;
+            default:
+                subjectField.placeholder = 'Enter message subject here';
+                subjectField.required = false;
+                break;
+        }
+    });
+</script>
 {literal}
 <script>
     let page = 0;
@@ -158,6 +205,7 @@
                 page: page,
                 test: $('#test').is(':checked') ? 'on' : 'off',
                 service: $('#service').val(),
+                subject: $('#subject').val(),
             },
             dataType: 'json',
             beforeSend: function () {
@@ -186,10 +234,10 @@
                         let statusClass = msg.status.includes('Failed') ? 'danger' : 'success';
                         historyTable.row.add([
                             msg.name,
-                            msg.phone,
+                            msg.channel,
                             `<span class="text-${statusClass}">${msg.status}</span>`,
                             msg.message || 'No message',
-                            msg.router ? msg.router : 'All Router', 
+                            msg.router ? msg.router : 'All Router',
                             msg.service == 'all' ? 'All Service' : (msg.service || 'No Service')
                         ]).draw(false); // Add row without redrawing the table
                     });
@@ -207,7 +255,7 @@
                     console.error("Unexpected response format:", response);
                     $('#status').html(`
                         <div class="alert alert-danger">
-                            <i class="fas fa-exclamation-circle"></i> Error: Unexpected response format.
+                            <i class="fas fa-exclamation-circle"></i> Error: ${response.message}
                         </div>
                     `);
                 }
